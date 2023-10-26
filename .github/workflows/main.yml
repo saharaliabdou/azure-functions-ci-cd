@@ -31,7 +31,7 @@ jobs:
     steps:
     - name: Deploy to Azure Functions
       env:
-        AZURE_FUNCTIONAPP_NAME: your-function-app-name
+        AZURE_FUNCTIONAPP_NAME: sahtestfunctions
         AZURE_FUNCTIONAPP_PACKAGE_PATH: .  # Path to your build output
         AZURE_FUNCTIONAPP_DEPLOY_METHOD: zipdeploy
       uses: azure/functions-action@v1  # Use the official Azure Functions action.
