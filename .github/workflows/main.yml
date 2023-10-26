@@ -1,61 +1,25 @@
-name: Azure Functions CI/CD
+name: CI/CD for Azure Functions
 
 on:
   push:
     branches:
-      - main  
+      - main 
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Clear npm cache
-        run: npm cache clean --force
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: main
-          path: AzureFunctionsTutorial
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 10.1.0  
-          
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build  
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Azure CLI
-        uses: azure/setup-python@v2
-        with:
-          python-version: '3.x'
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Add Az CLI to PATH
-        run: |
-          echo "$RUNNER_TOOL_CACHE/az/2.53.1/x64" >> $GITHUB_PATH  
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CLIENT_ID }}
-          password: ${{ secrets.AZURE_CLIENT_SECRET }}
+    - name: Deploy to Azure Functions
+      env:
+        AZURE_FUNCTIONAPP_NAME: sahtestfunctions
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        AZURE_TENANT_ID: 98e60346-ad63-4f8f-9160-5799700083d3
+      run: |
+        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+        func azure functionapp publish $AZURE_FUNCTIONAPP_NAME --javascript
 
-      - name: Deploy to Azure Functions
-        env:
-          AZURE_FUNCTIONAPP_NAME: sahtestfunctions
-          AZURE_FUNCTIONAPP_PACKAGE_PATH: AzurefunctionsTutorial  
-          AZURE_FUNCTIONAPP_DEPLOY_METHOD: zipdeploy
-        uses: azure/functions-action@v1
-        with:
-          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          deploy-method: ${{ env.AZURE_FUNCTIONAPP_DEPLOY_METHOD }}
-          slot-name: production  
