@@ -1,0 +1,42 @@
+name: Azure Functions CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Change to your branch name if necessary
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # This step checks out your code.
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14  # Change to your Node.js version if needed
+
+    - name: Install dependencies
+      run: npm install  # Replace with the appropriate package manager and command.
+
+    - name: Build
+      run: npm build  # Adjust this to your build process.
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to Azure Functions
+      env:
+        AZURE_FUNCTIONAPP_NAME: your-function-app-name
+        AZURE_FUNCTIONAPP_PACKAGE_PATH: .  # Path to your build output
+        AZURE_FUNCTIONAPP_DEPLOY_METHOD: zipdeploy
+      uses: azure/functions-action@v1  # Use the official Azure Functions action.
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        deploy-method: ${{ env.AZURE_FUNCTIONAPP_DEPLOY_METHOD }}
+        slot-name: production  # Change to your deployment slot if needed
