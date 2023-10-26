@@ -3,7 +3,7 @@ name: CI/CD for Azure Functions
 on:
   push:
     branches:
-      - main 
+      - main  # Change this to the name of your main branch
 
 jobs:
   deploy:
@@ -16,10 +16,9 @@ jobs:
     - name: Deploy to Azure Functions
       env:
         AZURE_FUNCTIONAPP_NAME: sahtestfunctions
-        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        AZURE_TENANT_ID: 98e60346-ad63-4f8f-9160-5799700083d3
       run: |
-        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+        az login --service-principal -u ${{ secrets.AZURE_SP_ID }} -p ${{ secrets.AZURE_SP_PASSWORD }} --tenant ${{ secrets.AZURE_TENANT_ID }}
         func azure functionapp publish $AZURE_FUNCTIONAPP_NAME --javascript
 
+# Don't forget to set the Azure service principal secrets as repository secrets
+# AZURE_SP_ID, AZURE_SP_PASSWORD, and AZURE_TENANT_ID
