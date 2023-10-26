@@ -11,7 +11,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-
+     
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+    - name: Install Azure Functions Core Tools
+      run: npm install -g azure-functions-core-tools@3 --unsafe-perm true
+      
     - name: Deploy to Azure Functions
       env:
         AZURE_FUNCTIONAPP_NAME: sahtestfunctions
