@@ -22,32 +22,41 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm build
+        run: npm run build  # Adjust this to your build script
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Azure CLI
-      uses: azure/setup-python@v2
-      with:
+      - name: Install Azure CLI
+        uses: azure/setup-python@v2
+        with:
           python-version: '3.x'
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CLIENT_ID }}
-        password: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-    - name: Deploy to Azure Functions
-      env:
-        AZURE_FUNCTIONAPP_NAME: sahtestfunctions
-        AZURE_FUNCTIONAPP_PACKAGE_PATH: .
-        AZURE_FUNCTIONAPP_DEPLOY_METHOD: zipdeploy
+      - name: Add Az CLI to PATH
+        run: |
+          echo "$RUNNER_TOOL_CACHE/az/2.x.x/x64" >> $GITHUB_PATH  # Replace '2.x.x' with your Azure CLI version
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CLIENT_ID }}
+          password: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Deploy to Azure Functions
+        env:
+          AZURE_FUNCTIONAPP_NAME: sahtestfunctions
+          AZURE_FUNCTIONAPP_PACKAGE_PATH: .
+          AZURE_FUNCTIONAPP_DEPLOY_METHOD: zipdeploy
         uses: azure/functions-action@v1
-      with:
+        with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           deploy-method: ${{ env.AZURE_FUNCTIONAPP_DEPLOY_METHOD }}
           slot-name: production  # Change to your deployment slot if needed
 
+        
+
+
+    
