@@ -47,7 +47,7 @@ jobs:
       - name: Deploy to Azure Functions
         env:
           AZURE_FUNCTIONAPP_NAME: sahtestfunctions
-          AZURE_FUNCTIONAPP_PACKAGE_PATH: .\AzureFunctionsTutorial
+          AZURE_FUNCTIONAPP_PACKAGE_PATH: C:\Users\sahali\AzurefunctionsTutorial
           AZURE_FUNCTIONAPP_DEPLOY_METHOD: zipdeploy
         uses: azure/functions-action@v1
         with:
