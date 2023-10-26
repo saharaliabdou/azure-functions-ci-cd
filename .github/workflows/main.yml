@@ -13,6 +13,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: main
+          path: AzureFunctionsTutorial
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
